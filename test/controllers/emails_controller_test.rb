@@ -1,9 +1,8 @@
 require 'test_helper'
 
 class EmailsControllerTest < ActionDispatch::IntegrationTest
-  test "should get create" do
-    get emails_create_url
+  test "should reponse successfully" do
+    post emails_url
     assert_response :success
   end
-
 end
