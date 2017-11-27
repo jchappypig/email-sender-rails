@@ -70,4 +70,7 @@ guard :rspec, cmd: "bundle exec rspec" do
 
   # Services
   watch(%r{^app/services/(.+)_(service)\.rb$}) { "#{rspec.spec_dir}/services" }  
+
+  # Providers
+  watch(%r{^app/providers/(.+)\.rb$}) { "#{rspec.spec_dir}/providers" }
 end

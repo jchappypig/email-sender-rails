@@ -48,6 +48,10 @@ RSpec.configure do |config|
     metadata[:type] = :service
   end
 
+  config.define_derived_metadata(:file_path => Regexp.new('/spec/providers/')) do |metadata|
+    metadata[:type] = :provider
+  end
+
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin
