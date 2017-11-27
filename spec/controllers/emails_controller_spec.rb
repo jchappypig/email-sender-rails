@@ -4,10 +4,10 @@ RSpec.describe EmailsController, type: :controller do
   let(:email_params) {{ 
     'from' => 'from@test.com',
     'to' => 'to@test.com',
+    'subject' => 'email subject',
+    'content' => 'email content',
     'cc' => 'cc@test.com',
     'bcc' => 'bcc@test.com',
-    'subject' => 'email subject',
-    'content' => 'email content'
   }}
   
   describe 'POST #create' do
@@ -17,10 +17,10 @@ RSpec.describe EmailsController, type: :controller do
       expect(EmailsService).to receive(:send).with(
         email_params['from'],
         email_params['to'],
+        email_params['subject'],
+        email_params['content'],
         email_params['cc'],
         email_params['bcc'],
-        email_params['subject'],
-        email_params['content']
       )
       post :create, params: email_params
     end

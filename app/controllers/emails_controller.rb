@@ -7,7 +7,7 @@ class EmailsController < ApplicationController
     subject = email_params['subject']
     content = email_params['content']
   
-    response = EmailsService.send(from, to, cc, bcc, subject, content)
+    response = EmailsService.send(from, to, subject, content, cc, bcc)
   
     render status: response.code, json: response
   end
