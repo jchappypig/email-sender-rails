@@ -4,6 +4,8 @@ RSpec.describe EmailsController, type: :controller do
   let(:email_params) {{ 
     'from' => 'from@test.com',
     'to' => 'to@test.com',
+    'cc' => 'cc@test.com',
+    'bcc' => 'bcc@test.com',
     'subject' => 'email subject',
     'content' => 'email content'
   }}

@@ -15,6 +15,6 @@ class EmailsController < ApplicationController
   private
 
   def email_params
-    params.permit(:from, :to, :subject, :content)
+    params.permit(:from, :to, :cc, :bcc, :subject, :content)
   end
 end
