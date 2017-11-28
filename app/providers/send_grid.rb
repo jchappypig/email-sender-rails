@@ -1,7 +1,7 @@
 class SendGrid
 	URL = 'https://api.sendgrid.com/v3/mail/send'
 	class << self
-		def send(from, to, subject, content, cc = nil, bcc = nil)
+		def send(from, to, subject, content, cc, bcc)
 			personalizations = [{
 				to: to && mapToEmails(to),
 				cc: cc && mapToEmails(cc),
@@ -24,7 +24,6 @@ class SendGrid
 							Authorization: "Bearer #{Figaro.env.send_grid_api_key}",
 							content_type: :json
 						}
-
 				)
 
 				return {code: response.code, body: 'Email sent successfully!'}

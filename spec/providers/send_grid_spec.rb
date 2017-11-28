@@ -146,7 +146,9 @@ RSpec.describe SendGrid, type: :provider do
         'jchappypig@hotmail.com',
         'to@hotmail.com, happy <hh@gmail.com>',
         'hello subject',
-        'hello world content'
+        'hello world content',
+        'Stephano <stephano@gmail.com>',
+        'Huanhuan <jchappypig@gmail.com>'
       )
 
       expect(response).to eq({code: 202, body: 'Email sent successfully!'})
@@ -163,7 +165,9 @@ RSpec.describe SendGrid, type: :provider do
         'jchappypig@hotmail.com',
         'to@hotmail.com, happy <hh@gmail.com>',
         'hello subject',
-        'hello world content'
+        'hello world content',
+        'Stephano <stephano@gmail.com>',
+        'Huanhuan <jchappypig@gmail.com>'
       )
 
       expect(response).to eq({code: 400, body: {'errors'=>'invalid'}})
