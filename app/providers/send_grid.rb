@@ -18,18 +18,18 @@ class SendGrid
 				response = RestClient::Request.execute(
 					method: :post,
 					url: URL,
-					payload: payload.to_json,
+					payload: payload,
 					headers:
 						{
 							Authorization: "Bearer #{Figaro.env.send_grid_api_key}",
-							content_type: :json
 						}
 				)
-
-				return {code: response.code, body: 'Email sent successfully!'}
+				response_body = 'Email sent successfully!'
 			rescue RestClient::ExceptionWithResponse => err
 				response = err.response
-				return {code: response.code, body: JSON.parse(response.body)}
+				response_body = response.body
+			ensure
+				return RestClient::Response.create(to_json(response_body), response.net_http_res, response.request)
 			end
 		end
 
@@ -53,6 +53,13 @@ class SendGrid
 		end
 
 		private
+
+		def to_json(response_body)
+			JSON.parse(response_body)
+			return response_body
+		rescue JSON::ParserError => e
+			return response_body.to_json
+		end
 
 		def extractEmail(input)
 			email = input

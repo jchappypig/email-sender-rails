@@ -83,12 +83,19 @@ RSpec.describe SendGrid, type: :provider do
   end
 
   describe 'send' do
+    def new_response(body, net_http_res, request)
+      OpenStruct.new(body: body, net_http_res: net_http_res, request: request, code: net_http_res.code)
+    end
+
     before(:each) do
       allow(Figaro).to receive(:env).and_return(OpenStruct.new(send_grid_api_key: 'abc_sengrid_key'))
+      allow(RestClient::Response).to receive(:create) do |body, net_http_res, request|
+        new_response(body, net_http_res, request)
+      end
     end
 
     it('calls sendgrid API') do
-      success_response = OpenStruct.new(code: 202)
+      success_response = new_response('', OpenStruct.new({code: 202}), 'request')
       allow(RestClient::Request).to receive(:execute)
       .and_return(success_response)
       expect(RestClient::Request).to receive(:execute).with({
@@ -119,11 +126,10 @@ RSpec.describe SendGrid, type: :provider do
             type: 'text/plain',
             value: 'hello world content'
           }]
-        }.to_json,
+        },
         headers:
           {
             Authorization: 'Bearer abc_sengrid_key',
-            content_type: :json
           }
       })
 
@@ -138,9 +144,8 @@ RSpec.describe SendGrid, type: :provider do
     end
 
     it('returns constructed response on success') do
-      success_response = OpenStruct.new(code: 202)
-      allow(RestClient::Request).to receive(:execute)
-        .and_return(success_response)
+      success_response = new_response('', OpenStruct.new({code: 202}), 'request')
+      allow(RestClient::Request).to receive(:execute).and_return(success_response)
 
       response = SendGrid.send(
         'jchappypig@hotmail.com',
@@ -151,12 +156,13 @@ RSpec.describe SendGrid, type: :provider do
         'Huanhuan <jchappypig@gmail.com>'
       )
 
-      expect(response).to eq({code: 202, body: 'Email sent successfully!'})
+      expect(response.code).to eq(202)
+      expect(response.body).to eq("\"Email sent successfully!\"")
     end
 
     it('returns constructed response on error') do
       error_response = RestClient::ExceptionWithResponse.new(
-        OpenStruct.new(code: 400, body: '{"errors": "invalid"}')
+        new_response('{"errors": "invalid"}', OpenStruct.new({code: 400}), 'request')
       )
       allow(RestClient::Request).to receive(:execute)
         .and_raise(error_response)
@@ -170,7 +176,8 @@ RSpec.describe SendGrid, type: :provider do
         'Huanhuan <jchappypig@gmail.com>'
       )
 
-      expect(response).to eq({code: 400, body: {'errors'=>'invalid'}})
+      expect(response.code).to eq(400)
+      expect(response.body).to eq("{\"errors\": \"invalid\"}")
     end
   end
 end

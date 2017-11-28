@@ -10,12 +10,12 @@ RSpec.describe EmailsService, type: :service do
   let(:send_grid_response) {OpenStruct.new(code: 200, body: "I have SendGrid #{status_code}")}
   let(:mailgun_response) {OpenStruct.new(code: status_code, body: "I have Mailgun #{status_code}")}
 
-  # it 'sends email through SsendGrid provider' do
-  #   allow(SendGrid).to receive(:send).and_return(OpenStruct.new(code: 200, body: "I have SendGrid 200}"))
-  #   expect(SendGrid).to receive(:send).with(from, to, subject, content, cc, bcc)
+  it 'sends email through SsendGrid provider' do
+    allow(SendGrid).to receive(:send).and_return(OpenStruct.new(code: 200, body: "I have SendGrid 200}"))
+    expect(SendGrid).to receive(:send).with(from, to, subject, content, cc, bcc)
 
-  #   EmailsService.send(from, to, subject, content, cc, bcc)
-  # end
+    EmailsService.send(from, to, subject, content, cc, bcc)
+  end
 
   [400, 200, 202].each do |status_code|
     context "when SendGrid returns #{status_code}" do
@@ -51,6 +51,12 @@ RSpec.describe EmailsService, type: :service do
     end
 
     context "when SendGrid returns #{status_code}" do
+      it 'fallbacks to mailgun provider' do
+        EmailsService.send(from, to, subject, content, cc, bcc)
+
+        expect(Mailgun).to receive(:send)
+      end
+
       it 'returns mailgun response' do
         response = EmailsService.send(from, to, subject, content, cc, bcc)
 

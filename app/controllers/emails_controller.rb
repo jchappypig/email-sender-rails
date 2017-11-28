@@ -9,7 +9,7 @@ class EmailsController < ApplicationController
   
     response = EmailsService.send(from, to, subject, content, cc, bcc)
   
-    render status: response[:code], json: response[:body].to_json
+    render status: response.code, json: response.body
   end
   
   private
