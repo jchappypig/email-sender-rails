@@ -18,6 +18,7 @@
 !/tmp/.keep
 log/
 tmp/
+.idea/
 
 .byebug_history
 

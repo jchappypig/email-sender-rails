@@ -6,12 +6,12 @@ class EmailsController < ApplicationController
     bcc = email_params['bcc']
     subject = email_params['subject']
     content = email_params['content']
-  
+
     response = EmailsService.send(from, to, subject, content, cc, bcc)
-  
+
     render status: response.code, json: response.body
   end
-  
+
   private
 
   def email_params
