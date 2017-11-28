@@ -2,16 +2,8 @@
 A backend service that accepts necessary information and send emails
 
 ## Setup
-```
-bundle exec spring binstub --all
-rails db:create
-rails db:migrate
-```
-
-Note: No database is required in this task. It's rails default that needs a migration.
-
-You will need to config SendGrid and Mailgun API key.
-Create `application.xml` under `config` directory. Then put your API keys there.
+You will need to config SendGrid and Mailgun API key before starting the service.
+Create `config/application.yml` and put your API keys there.
 
 eg.
 ```
@@ -62,7 +54,6 @@ spec                # Unit tests
 
 ## TODO
 * check what's missing in README
-* removed unused rails code.
 
 ## Nice to have
 Validation on user inputs before sending them to providers. Because the provider validations are not reliable in the sense that they are not consistent. eg. subject is a required field in SendGrid but is not required in Mailgun.
