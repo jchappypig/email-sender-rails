@@ -126,10 +126,11 @@ RSpec.describe SendGrid, type: :provider do
             type: 'text/plain',
             value: 'hello world content'
           }]
-        },
+        }.to_json,
         headers:
           {
             Authorization: 'Bearer abc_sengrid_key',
+            content_type: :json
           }
       })
 
@@ -177,7 +178,7 @@ RSpec.describe SendGrid, type: :provider do
       )
 
       expect(response.code).to eq(400)
-      expect(response.body).to eq("{\"errors\": \"invalid\"}")
+      expect(response.body).to eq("\"invalid\"")
     end
   end
 end

@@ -25,7 +25,6 @@ RSpec.describe Mailgun, type: :provider do
           to: 'to@hotmail.com, happy <hh@gmail.com>',
           subject: 'hello subject',
           text: 'hello world content',
-          cc: nil,
           bcc: 'Huanhuan <jchappypig@gmail.com>'
         }
       })
@@ -74,7 +73,7 @@ RSpec.describe Mailgun, type: :provider do
       )
 
       expect(response.code).to eq(400)
-      expect(response.body).to eq("{\"errors\": \"invalid\"}")
+      expect(response.body).to eq("[{\"errors\":\"invalid\"}]")
     end
   end
 end

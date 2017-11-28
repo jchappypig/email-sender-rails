@@ -51,12 +51,6 @@ RSpec.describe EmailsService, type: :service do
     end
 
     context "when SendGrid returns #{status_code}" do
-      it 'fallbacks to mailgun provider' do
-        EmailsService.send(from, to, subject, content, cc, bcc)
-
-        expect(Mailgun).to receive(:send)
-      end
-
       it 'returns mailgun response' do
         response = EmailsService.send(from, to, subject, content, cc, bcc)
 

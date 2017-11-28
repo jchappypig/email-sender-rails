@@ -3,26 +3,27 @@ class SendGrid
   class << self
     def send(from, to, subject, content, cc, bcc)
       personalizations = [{
-                              to: to && mapToEmails(to),
-                              cc: cc && mapToEmails(cc),
-                              bcc: bcc && mapToEmails(bcc),
+                            to: to && mapToEmails(to),
+                            cc: cc && mapToEmails(cc),
+                            bcc: bcc && mapToEmails(bcc),
                           }]
 
       payload = {
-          personalizations: personalizations,
-          from: from && mapToEmails(from)[0],
-          subject: subject,
-          content: [mapToContent(content)]
+        personalizations: personalizations,
+        from: from && mapToEmails(from)[0],
+        subject: subject,
+        content: [mapToContent(content)]
       }
       begin
         response = RestClient::Request.execute(
-            method: :post,
-            url: URL,
-            payload: payload,
-            headers:
-                {
-                    Authorization: "Bearer #{Figaro.env.send_grid_api_key}",
-                }
+          method: :post,
+          url: URL,
+          payload: payload.to_json,
+          headers:
+            {
+              Authorization: "Bearer #{Figaro.env.send_grid_api_key}",
+              content_type: :json
+            }
         )
         response_body = 'Email sent successfully!'
       rescue RestClient::ExceptionWithResponse => err
@@ -39,26 +40,27 @@ class SendGrid
       end
 
       input
-          .split(',')
-          .map {|email| email.strip}
-          .select {|email| email.present?}
-          .map {|email| extractEmail(email)}
+        .split(',')
+        .map {|email| email.strip}
+        .select {|email| email.present?}
+        .map {|email| extractEmail(email)}
     end
 
     def mapToContent(input)
       {
-          type: 'text/plain',
-          value: input
+        type: 'text/plain',
+        value: input
       }
     end
 
     private
 
     def to_json(response_body)
-      JSON.parse(response_body)
-      return response_body
+      # Because SendGrid returns a different response format with Mailgun.
+      # Here is to consistent them with return format [{message: 'error message'}]
+      (JSON.parse(response_body)['errors']).to_json
     rescue JSON::ParserError => e
-      return response_body.to_json
+      response_body.to_json
     end
 
     def extractEmail(input)

@@ -5,11 +5,17 @@ class Mailgun
       payload = {
           from: from,
           to: to,
-          cc: cc,
-          bcc: bcc,
           subject: subject,
           text: content,
       }
+
+      if(cc)
+        payload[:cc] = cc
+      end
+
+      if(bcc)
+        payload[:bcc] = bcc
+      end
 
       begin
         response = RestClient::Request.execute(
@@ -30,10 +36,9 @@ class Mailgun
     private
 
     def to_json(response_body)
-      JSON.parse(response_body)
-      return response_body
+      ([JSON.parse(response_body)]).to_json
     rescue JSON::ParserError => e
-      return response_body.to_json
+      response_body.to_json
     end
   end
 end
