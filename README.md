@@ -52,6 +52,8 @@ spec                # Unit tests
   controllers
     emails_controller_spec.rb
 
+```
+
 ## Nice to have
 Validation on user inputs before sending them to providers. Because the provider validations are not reliable in the sense that they are not consistent. eg. subject is a required field in SendGrid but is not required in Mailgun.
 
