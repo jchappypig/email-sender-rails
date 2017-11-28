@@ -88,7 +88,9 @@ RSpec.describe SendGrid, type: :provider do
     end
 
     it('calls sendgrid API') do
+      success_response = OpenStruct.new(code: 202)
       allow(RestClient::Request).to receive(:execute)
+      .and_return(success_response)
       expect(RestClient::Request).to receive(:execute).with({
         method: :post,
         url: SendGrid::URL,
@@ -133,6 +135,38 @@ RSpec.describe SendGrid, type: :provider do
         nil,
         'Huanhuan <jchappypig@gmail.com>'
       )
+    end
+
+    it('returns constructed response on success') do
+      success_response = OpenStruct.new(code: 202)
+      allow(RestClient::Request).to receive(:execute)
+        .and_return(success_response)
+
+      response = SendGrid.send(
+        'jchappypig@hotmail.com',
+        'to@hotmail.com, happy <hh@gmail.com>',
+        'hello subject',
+        'hello world content'
+      )
+
+      expect(response).to eq({code: 202, body: 'Email sent successfully!'})
+    end
+
+    it('returns constructed response on error') do
+      error_response = RestClient::ExceptionWithResponse.new(
+        OpenStruct.new(code: 400, body: '{"errors": "invalid"}')
+      )
+      allow(RestClient::Request).to receive(:execute)
+        .and_raise(error_response)
+
+      response = SendGrid.send(
+        'jchappypig@hotmail.com',
+        'to@hotmail.com, happy <hh@gmail.com>',
+        'hello subject',
+        'hello world content'
+      )
+
+      expect(response).to eq({code: 400, body: {'errors'=>'invalid'}})
     end
   end
 end

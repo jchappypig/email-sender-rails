@@ -15,7 +15,7 @@ class SendGrid
 				content: [ mapToContent(content) ]
 			}
 			begin
-				RestClient::Request.execute(
+				response = RestClient::Request.execute(
 					method: :post,
 					url: URL,
 					payload: payload.to_json,
@@ -26,8 +26,11 @@ class SendGrid
 						}
 
 				)
+
+				return {code: response.code, body: 'Email sent successfully!'}
 			rescue RestClient::ExceptionWithResponse => err
-				err.response
+				response = err.response
+				return {code: response.code, body: JSON.parse(response.body)}
 			end
 		end
 
